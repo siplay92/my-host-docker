@@ -1,0 +1,109 @@
+version: '2'
+
+services:
+
+ app:
+  image: composer
+  tty: true
+  volumes:
+   - ./www:/app
+
+ nginx:
+  image: nginx:latest
+  ports:
+   - 80:80
+   - 443:443
+
+  volumes:
+   - ./etc/nginx/nginx.conf:/etc/nginx/nginx.conf
+   - ./etc/nginx/.htpasswd:/etc/nginx/.htpasswd
+   - ./etc/nginx/conf.d:/etc/nginx/conf.d
+   - ./etc/nginx/modules-enabled:/etc/nginx/modules-enabled
+   - ./www:/var/www
+   - ./logs/nginx:/var/log/nginx
+  links:
+   - php-fpm
+
+ php-fpm:
+  build: ./images/php-fpm
+  volumes:
+   - ./etc/php/custom.ini:/usr/local/etc/php/conf.d/50-custom.ini
+   - ./etc/php/remote-xdebug.ini:/usr/local/etc/php/conf.d/remote-xdebug.ini
+   - ./etc/php-fpm/www.conf:/usr/local/etc/php-fpm.d/www.conf
+   - ./www:/var/www
+   - ./logs/monolog:/var/log/monolog
+   - ./logs/php:/var/log/php
+
+ memcached:
+  image: memcached:latest
+  ports:
+   - 11211:11211
+  command: ["-m", "2048m"]
+
+ mysql:
+  build: ./images/mysql
+  environment:
+   - MYSQL_DATABASE=db_smf
+   - MYSQL_USER=default
+   - MYSQL_PASSWORD=L5WdhLRaMX
+   - MYSQL_ROOT_PASSWORD=GNwhVf67ve
+   - TZ=UTC
+  volumes:
+   - ./etc/mysql:/etc/mysql/conf.d
+   - ./home/dev/mysql/:/home/dev/mysql
+   - ./var/mysql:/var/lib/mysql
+   - ./logs/mysql:/var/log/mysql
+  ports:
+   - 3306:3306
+   
+ postgres:
+  image: postgres
+  restart: always
+  environment:
+   POSTGRES_PASSWORD: L5WdhLRaMX
+   POSTGRES_DB: db_yii
+  volumes:
+   - ./var/postgres:/var/lib/postgresql/data 
+  ports:
+   - 5432:5432
+   
+ adminer:
+  image: adminer
+  restart: always
+  ports:
+   - 8080:8080
+
+  #environment:
+  # - DEBUG=true
+ #  
+ #  - DB_USER=default
+ #  - DB_PASS=L5WdhLRaMX
+ #  - DB_NAME=db_yii
+ #  - DB_TEMPLATE=
+
+ #  - DB_EXTENSION=
+
+ #  - REPLICATION_MODE=
+ #  - REPLICATION_USER=
+ #  - REPLICATION_PASS=
+ #  - REPLICATION_SSLMODE=
+ # ports:
+ #  - 54320:5432
+ # volumes:
+ #  - /etc/postgresql:/var/lib/postgresql
+   
+ rabbitmq:
+  image: rabbitmq:latest
+  ports:
+   - 15672:15672
+   - 5672:5672
+   
+ tarantool:
+  image: tarantool/tarantool:2.3
+  environment:
+   TARANTOOL_USER_NAME: admin
+   TARANTOOL_USER_PASSWORD: tarantool
+  ports:
+   - 3301:3301
+  volumes:
+   - ./var/tarantool:/var/lib/tarantool 

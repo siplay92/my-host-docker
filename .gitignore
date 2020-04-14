@@ -1,0 +1,7 @@
+.idea
+logs/*
+!logs/.gitkeep
+var
+home
+www/*
+!www/.gitkeep 

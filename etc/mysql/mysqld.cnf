@@ -1,0 +1,45 @@
+#
+# The MySQL  Server configuration file.
+#
+# For explanations see
+# http://dev.mysql.com/doc/mysql/en/server-system-variables.html
+[client]
+default-character-set=utf8
+[mysql]
+default-character-set=utf8
+
+#innodb_additional_mem_pool_size=100M
+#innodb_file_io_threads=8
+#innodb_lock_wait_timeout=50
+#innodb_log_buffer_size=16M
+#innodb_flush_log_at_trx_commit=0
+#innodb_buffer_pool_size=1024M
+
+#table_cache=8192
+
+#key_buffer_size=32M
+#sort_buffer=16M
+#read_buffer_size=32M
+
+#query_cache_size=128M
+#query_cache_type=1
+
+[mysqld]
+pid-file = /var/run/mysqld/mysqld.pid
+socket = /var/run/mysqld/mysqld.sock
+datadir = /var/lib/mysql
+#log-error = /var/log/mysql/error.log
+# By default we only accept connections from localhost
+#bind-address   = 127.0.0.1
+# Disabling symbolic-links is recommended to prevent assorted security risks
+symbolic-links=0
+#
+collation-server = utf8_unicode_ci
+init-connect='SET NAMES utf8'
+character-set-server = utf8
+
+slow_query_log = /var/log/mysql/mysql-slow.log
+long_query_time = 1
+
+
+
