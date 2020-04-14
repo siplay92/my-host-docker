@@ -107,3 +107,14 @@ services:
    - 3301:3301
   volumes:
    - ./var/tarantool:/var/lib/tarantool 
+
+ node:
+  image: "node:13"
+  working_dir: /var/www/nodejs
+  environment:
+   - NODE_ENV=production
+  volumes:
+   - ./www/webgldemo/server:/var/www/nodejs
+  ports:
+   - 8888:8888
+  command: "npm start"
